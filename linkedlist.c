@@ -35,46 +35,57 @@ void print(list *head, bool newline) {
 }
 
 list *sort(list *start) {
-    if (!start || !start->next)
+    if (!start || (start->next == start))
         return start;
     list *left = start;
     list *right = left->next;
-    left->next = NULL; // partition input list into left and right sublist
 
-    left = sort(left); // list of single element is already sorted
-    right = sort(right); // sorted right sublist
+    left->prev->next  = right;
+    right->prev = left->prev;
 
-    // insertion until the two sublists both been traversed
-    // merge is always infront of the insertion position
-    for (list *merge = NULL; left || right;) {
-        // right list hasn't reach the end or
-        // left node has found its position for inserting
-        if (right == NULL || (left && left->data < right->data)) {
+    left->next = left;
+    left->prev = left;
+
+    left = sort(left); 
+    right = sort(right);
+    printf("=== left->data = %d first right = %d ===\n", left->data, right->data);
+    for (list *merge = NULL; left || right != start;) {
+        if (right == start || (left && left->data < right->data)) {
             if (!merge) {
-                // start points to the node with min value
-                // merge starts from min value
-                start = merge = left; // LL1
+                printf("start = left = %d\n",left->data);
+                start = merge = left;
             }
             else {
-                // insert left node between merge and right point to
-                merge->next = left; // LL2
+                printf("1 .merge data = %d left = %d\n",merge->data,left->data);
+                left->prev = merge;
+                left->next = merge->next;
+                merge->next->prev = left;
+                merge->next = left;
                 merge = merge->next; 
             }
-            left = left->next; // LL3
+            left = NULL;
         }
         else {
             if (!merge) {
-                start = merge = right; // LL4
+                printf("start = right = %d\n",right->data);
+                start = merge = right;
             } else {
-                // shift until right == NULL or
-                // inset merge(=left) in front of right when min is in left sublist
-                // (LL1->LL5-> shift until right == NULL)
-                merge->next = right; // LL5
+                if (merge == merge->next){
+                    printf("2-1 .merge data = %d next = %d right = %d\n",merge->data,merge->next->data,right->data);
+                    merge->next = right;
+                    merge->prev = right->prev;//
+                    right->prev->next = merge;//
+                    right->prev = merge;
+                } else 
+                {
+                     printf("2-2 .merge data = %d next = %d right = %d\n",merge->data,merge->next->data,right->data);
+                }
                 merge = merge->next;
             }
-            right = right->next; // LL6
+            right = right->next;
         }
     }
+    printf("\n");
     return start;
 }
 void list_free(list **Input) {

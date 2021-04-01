@@ -34,17 +34,17 @@ int main() {
     int correct = 0, i = 0;
     srand(time(NULL));
    // for ( i = 0; i < 100; i++) {
-        int testcase[10] = {0};
-        for (int j = 0; j < 10; j++)
+        int testcase[5] = {0};
+        for (int j = 0; j < 5; j++)
             testcase[j] = rand() % 50;
         
         list *head = NULL;
-        for (int j = 9; j >= 0; j--)
+        for (int j = 4; j >= 0; j--)
             push(&head, testcase[j]);
         printf("Testcase %d: ", i+1);
         print(head, false);
-        printf(" --> ");
-        if (test(head, testcase, 10))
+        printf(" --> \n");
+        if (test(head, testcase, 5))
        //     correct++;
         list_free(&head);
         printf("\n");
